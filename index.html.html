@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invol Library — Responsive Grid with Title Box</title>
+
+  <style>
+    /* RESET */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      background: #ffffff;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2px;
+      min-height: 100vh;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(15px);
+      display: flex;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-container {
+      width: 90%;
+      max-width: 1100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+    }
+
+    .nav-logo img {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
+      transition: all 0.3s ease;
+    }
+    .nav-logo img:hover { transform: scale(1.05); }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .nav-links li a {
+      text-decoration: none;
+      font-size: 0.95rem;
+      color: #333;
+      padding: 8px 18px;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.25);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links li a::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 25px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, #ff7a18, #af002d, #319197);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.4;
+    }
+
+    .nav-links li a:hover::before {
+      opacity: 1;
+      background: linear-gradient(135deg, #ff7a18, #ffd36b, #4facfe);
+    }
+
+    .menu-icon {
+      display: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
+
+    #menu-toggle { display: none; }
+
+@media (max-width: 768px) {
+  .menu-icon { 
+    display: block; 
+    z-index: 2001; /* stays clickable above all */
+    position: relative;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    flex-direction: column;
+    width: 200px;
+    padding: 15px;
+    border-radius: 18px;
+    transform: translateY(-20px);
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    transition: all 0.4s ease;
+
+    /* 👇 key addition */
+    z-index: 2000; /* ensures it floats above everything */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  #menu-toggle:checked + .menu-icon + .nav-links {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  /* Also make sure navbar stays topmost */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1999;
+  }
+}
+
+
+    /* HEADER BANNER */
+    .header {
+      width: 100%;
+      max-width: 1200px;
+      margin: 25px auto 40px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+    }
+    .header img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 20px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .header:hover img { transform: scale(1.03); }
+
+/* -------------------- FILTER BAR -------------------- */
+.filter-bar {
+  width: 100%;
+  max-width: 1200px;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  position: ;
+  top: 64px;
+  z-index: 100;
+  transition: all 0.3s ease;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  overflow-x:auto;
+  
+}
+
+/* Gradient border (same as top nav) */
+.filter-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ff7a18, #af002d, #319197);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Filter Buttons — identical logic to nav links */
+.filter-btn {
+  text-decoration: none;
+  font-size: 0.95rem;
+  color: #333;
+  padding: 8px 18px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.25);
+  position: relative;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.filter-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 25px;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #ff7a18, #af002d, #319197);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.4;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+.filter-btn:hover::before {
+  opacity: 1;
+  background: linear-gradient(135deg, #ff7a18, #ffd36b, #4facfe);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #ff7a18, #af002d, #319197);
+  color: #fff;
+  font-weight: 600;
+}
+
+    /* TITLE BOX */
+    .title-box {
+      width: 100%;
+      max-width: 1200px;
+      margin: 40px auto 10px;
+      background: #fff;
+      border-radius: 1em;
+      padding: 20px 30px;
+      text-align: left;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    }
+    .title-box-box {
+      width: 100%;
+      max-width: 1200px;
+      margin: 10px auto 25px;
+      background: #fff;
+      border-radius: 1em;
+      padding: 0px 0px;
+      text-align: left;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.06);
+    }
+
+
+    .title-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 1em;
+      padding: 3px;
+      background: linear-gradient(135deg, #ff7a18, #af002d, #319197);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .title-box h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 8px;
+    }
+
+    .title-box p {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    /* MAIN BOX */
+    .grid-box {
+      width: 100%;
+      max-width: 1200px;
+      background: #fff;
+      border-radius: 1em;
+      position: relative;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .grid-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      padding: 3px;
+      border-radius: 1em;
+      background: linear-gradient(135deg, #ff7a18, #af002d, #319197);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    /* GRID LAYOUT */
+    .grid {
+      display: grid;
+      gap: 25px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      justify-items: center;
+      position: relative;
+    }
+
+    /* FLIP CARD */
+    .flip-card {
+      width: 100%;
+      max-width: 220px;
+      aspect-ratio: 2/3;
+      perspective: 1000px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .flip-card-inner {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front,
+    .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 0.8em;
+      backface-visibility: hidden;
+      overflow: hidden;
+      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    .flip-card-front { background-size: cover; background-position: center; }
+
+    .flip-card-back {
+      background: #fff;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      padding: 1em;
+      transform: rotateY(180deg);
+      font-size: 0.9em;
+    }
+
+    .flip-card-back h2 { font-size: 1.1em; color: #222; margin-bottom: 0.5em; }
+    .flip-card-back h3 { font-size: 0.9em; color: #1f71dc; margin-bottom: 0.4em; }
+    .flip-card-back p {
+      font-size: 0.85em;
+      color: #555;
+      line-height: 1.3em;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    /* BUTTON */
+    .read-now {
+      margin-top: 0.8em;
+      padding: 0.6rem 1.4rem;
+      background: linear-gradient(90deg, #ff8c42, #ff4e50);
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .read-now:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(255, 100, 50, 0.6);
+    }
+
+    /* GRADIENT BORDER FOR CARDS */
+    .flip-card-front::before,
+    .flip-card-back::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 0.8em;
+      padding: 2px;
+      background: linear-gradient(135deg, #ff7a18, #af002d, #319197);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+      .flip-card { max-width: 160px; }
+      .title-box h2 { font-size: 1.4rem; }
+      .title-box p { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ✅ NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="invol full logo.png" alt="Invol Logo">
+      </div>
+      <input type="checkbox" id="menu-toggle" />
+      <label for="menu-toggle" class="menu-icon">&#9776;</label>
+      <ul class="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Library</a></li>
+        <li><a href="#">Team</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ✅ HEADER -->
+  <div class="header">
+    <img src="Component 10 (2).png" alt="Invol Library Banner" />
+  </div>
+
+  <!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar">
+  <button class="filter-btn active">All</button>
+  <button class="filter-btn">Science</button>
+  <button class="filter-btn">Math</button>
+  <button class="filter-btn">History</button>
+  <button class="filter-btn">Technology</button>
+  <button class="filter-btn">Fiction</button>
+  <button class="filter-btn">Art</button>
+  <button class="filter-btn active">All</button>
+  <button class="filter-btn">Science</button>
+  <button class="filter-btn">Math</button>
+  <button class="filter-btn">History</button>
+  <button class="filter-btn">Technology</button>
+  <button class="filter-btn">Fiction</button>
+  <button class="filter-btn">Art</button>
+</div>
+
+
+<DIV class="title-box-box">
+<!-- ------------------------------------------------------------------------------------- -->
+  <div class="title-box-box">
+  <!-- ✅ TITLE BOX -->
+  <div class="title-box">
+    <h2>Explore Our Library</h2>
+    <p>Dive into a curated collection of books on design, development, and creativity.</p>
+  </div>
+  
+  
+
+  <!-- ✅ GRID BOX -->
+  <div class="grid-box">
+    <div class="grid">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book1.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>The Great Adventure</h2>
+            <h3>by John Doe</h3>
+            <p>Discover the thrill of exploration and courage in this stunning novel.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book2.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>CSS Secrets</h2>
+            <h3>by Mark White</h3>
+            <p>Beautiful tricks and modern styling patterns for professionals.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book3.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>React Mastery</h2>
+            <h3>by Emily Clark</h3>
+            <p>Build advanced frontends and understand React inside-out.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book3.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>React Mastery</h2>
+            <h3>by Emily Clark</h3>
+            <p>Build advanced frontends and understand React inside-out.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+        
+      </div>
+</div>
+
+<!-- --------------------------------------------------------------------------------- --> 
+
+<!-- --------------------------------------------------------------------------------- --> 
+</DIV>
+<!-- ------------------------------------------------------------------------------------- -->
+  <div class="title-box-box">
+  <!-- ✅ TITLE BOX -->
+  <div class="title-box">
+    <h2>Explore Our Library</h2>
+    <p>Dive into a curated collection of books on design, development, and creativity.</p>
+  </div>
+  
+  
+
+  <!-- ✅ GRID BOX -->
+  <div class="grid-box">
+    <div class="grid">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book1.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>The Great Adventure</h2>
+            <h3>by John Doe</h3>
+            <p>Discover the thrill of exploration and courage in this stunning novel.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book2.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>CSS Secrets</h2>
+            <h3>by Mark White</h3>
+            <p>Beautiful tricks and modern styling patterns for professionals.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book3.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>React Mastery</h2>
+            <h3>by Emily Clark</h3>
+            <p>Build advanced frontends and understand React inside-out.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book3.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>React Mastery</h2>
+            <h3>by Emily Clark</h3>
+            <p>Build advanced frontends and understand React inside-out.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+
+      </div>
+</div>
+</DIV>
+<!-- ------------------------------------------------------------------------------------- -->
+  <div class="title-box-box">
+  <!-- ✅ TITLE BOX -->
+  <div class="title-box">
+    <h2>Explore Our Library</h2>
+    <p>Dive into a curated collection of books on design, development, and creativity.</p>
+  </div>
+  
+  
+
+  <!-- ✅ GRID BOX -->
+  <div class="grid-box">
+    <div class="grid">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book1.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>The Great Adventure</h2>
+            <h3>by John Doe</h3>
+            <p>Discover the thrill of exploration and courage in this stunning novel.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('Scanned_20251010_185903\ \(1\)_page-0001.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>CSS Secrets</h2>
+            <h3>by Mark White</h3>
+            <p>Beautiful tricks and modern styling patterns for professionals.</p>
+            <button class="read-now" onclick="window.open('https://drive.google.com/file/d/1WxkpYu0Jy4w7D7aMH6_r9sU-3LK0CzxJ/view?usp=sharing')">
+  Read Now
+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book3.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>React Mastery</h2>
+            <h3>by Emily Clark</h3>
+            <p>Build advanced frontends and understand React inside-out.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book3.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>React Mastery</h2>
+            <h3>by Emily Clark</h3>
+            <p>Build advanced frontends and understand React inside-out.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+
+      </div>
+</div>
+<!-- ----------------------------------------------------------------------- -->
+ </DIV>
+<!-- ------------------------------------------------------------------------------------- -->
+  <div class="title-box-box">
+  <!-- ✅ TITLE BOX -->
+  <div class="title-box">
+    <h2>Explore Our Library</h2>
+    <p>Dive into a curated collection of books on design, development, and creativity.</p>
+  </div>
+  
+  
+
+  <!-- ✅ GRID BOX -->
+  <div class="grid-box">
+    <div class="grid">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book1.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>The Great Adventure</h2>
+            <h3>by John Doe</h3>
+            <p>Discover the thrill of exploration and courage in this stunning novel.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book2.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>CSS Secrets</h2>
+            <h3>by Mark White</h3>
+            <p>Beautiful tricks and modern styling patterns for professionals.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book3.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>React Mastery</h2>
+            <h3>by Emily Clark</h3>
+            <p>Build advanced frontends and understand React inside-out.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front" style="background-image: url('book3.jpg');"></div>
+          <div class="flip-card-back">
+            <h2>React Mastery</h2>
+            <h3>by Emily Clark</h3>
+            <p>Build advanced frontends and understand React inside-out.</p>
+            <button class="read-now">Read Now</button>
+          </div>
+        </div>
+
+      </div>
+</div>
+<!-- ----------------------------------------------------------------------------------------------------------- -->
+
+  <script>
+    document.querySelectorAll(".flip-card").forEach(card => {
+      card.addEventListener("click", () => {
+        card.classList.toggle("flipped");
+      });
+    });
+
+    document.querySelectorAll(".read-now").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.stopPropagation();
+        alert("Opening the book...");
+      });
+    });
+    
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    filterButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+        filterButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        // You can later add navigation logic here
+        });
+    });
+
+
+  </script>
+</body>
+</html>
